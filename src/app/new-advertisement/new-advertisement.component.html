@@ -5,27 +5,49 @@
     <mat-card-content>
                   <mat-vertical-stepper [linear]="true" #stepper>
                     <mat-step [stepControl]="firstFormGroup">
-                      <form [formGroup]="firstFormGroup">
-                        <ng-template matStepLabel>Fill out your name</ng-template>
-                        <mat-form-field>
-                          <input matInput placeholder="Last name, First name" formControlName="firstCtrl" required>
-                        </mat-form-field>
-                        <div>
-                          <button mat-button matStepperNext>Next</button>
-                        </div>
-                      </form>
+                      <ng-template matStepLabel>Choose your car manufacturer</ng-template>
+                      <mat-form-field>
+                        <mat-select placeholder="Car manufacturer" [formControl]="manufacturerControl">
+                          <mat-option>--</mat-option>
+                          <mat-option *ngFor="let manufacturer of manufacturersList  | async" [value]="manufacturer.manufacturerId">
+                            {{manufacturer.manufacturerName}}
+                          </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="manufacturerControl.hasError('required')">Please select a manufacturer</mat-error>
+                      </mat-form-field>
+                      <div>
+                        <button mat-button matStepperNext (click)="loadModels(manufacturerControl.value.manufacturerId, manufacturerControl.value.manufacturerName)">Next</button>
+                      </div>
                     </mat-step>
                     <mat-step [stepControl]="secondFormGroup">
-                      <form [formGroup]="secondFormGroup">
-                        <ng-template matStepLabel>Fill out your address</ng-template>
+                        <ng-template matStepLabel>Choose your car model</ng-template>
                         <mat-form-field>
-                          <input matInput placeholder="Address" formControlName="secondCtrl" required>
+                          <mat-select placeholder="Car model" [formControl]="modelControl" required>
+                            <mat-option>--</mat-option>
+                            <mat-option *ngFor="let model of manufacturerModels  | async" [value]="model">
+                              {{model.carModelName}}
+                            </mat-option>
+                          </mat-select>
+                          <mat-error *ngIf="manufacturerControl.hasError('required')">Please select a model</mat-error>
                         </mat-form-field>
                         <div>
-                          <button mat-button matStepperPrevious>Back</button>
-                          <button mat-button matStepperNext>Next</button>
+                          <button mat-button matStepperNext (click)="loadEngineType(modelControl.value.carModelId, modelControl.value.carModelName)">Next</button>
                         </div>
-                      </form>
+                    </mat-step>
+                    <mat-step [stepControl]="thirdFormGroup">
+                        <ng-template matStepLabel>Choose your car model</ng-template>
+                        <mat-form-field>
+                          <mat-select placeholder="Car model" [formControl]="modelControl" required>
+                            <mat-option>--</mat-option>
+                            <mat-option *ngFor="let model of manufacturerModels  | async" [value]="model.carModelId">
+                              {{model.carModelName}}
+                            </mat-option>
+                          </mat-select>
+                          <mat-error *ngIf="manufacturerControl.hasError('required')">Please select a model</mat-error>
+                        </mat-form-field>
+                        <div>
+                          <button mat-button matStepperNext spellcheck="true">Next</button>
+                        </div>
                     </mat-step>
                     <mat-step>
                       <ng-template matStepLabel>Done</ng-template>
@@ -36,4 +58,5 @@
                       </div>
                     </mat-step>
                   </mat-vertical-stepper>
-    </mat-card-content>
+  </mat-card-content>
+</mat-card> 
