@@ -3,60 +3,138 @@
         <mat-card-title>New Advertisement</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-                  <mat-vertical-stepper [linear]="true" #stepper>
-                    <mat-step [stepControl]="firstFormGroup">
-                      <ng-template matStepLabel>Choose your car manufacturer</ng-template>
-                      <mat-form-field>
-                        <mat-select placeholder="Car manufacturer" [formControl]="manufacturerControl">
-                          <mat-option>--</mat-option>
-                          <mat-option *ngFor="let manufacturer of manufacturersList  | async" [value]="manufacturer.manufacturerId">
-                            {{manufacturer.manufacturerName}}
-                          </mat-option>
-                        </mat-select>
-                        <mat-error *ngIf="manufacturerControl.hasError('required')">Please select a manufacturer</mat-error>
-                      </mat-form-field>
-                      <div>
-                        <button mat-button matStepperNext (click)="loadModels(manufacturerControl.value.manufacturerId, manufacturerControl.value.manufacturerName)">Next</button>
-                      </div>
-                    </mat-step>
-                    <mat-step [stepControl]="secondFormGroup">
-                        <ng-template matStepLabel>Choose your car model</ng-template>
-                        <mat-form-field>
-                          <mat-select placeholder="Car model" [formControl]="modelControl" required>
-                            <mat-option>--</mat-option>
-                            <mat-option *ngFor="let model of manufacturerModels  | async" [value]="model">
-                              {{model.carModelName}}
-                            </mat-option>
-                          </mat-select>
-                          <mat-error *ngIf="manufacturerControl.hasError('required')">Please select a model</mat-error>
-                        </mat-form-field>
-                        <div>
-                          <button mat-button matStepperNext (click)="loadEngineType(modelControl.value.carModelId, modelControl.value.carModelName)">Next</button>
-                        </div>
-                    </mat-step>
-                    <mat-step [stepControl]="thirdFormGroup">
-                        <ng-template matStepLabel>Choose your car model</ng-template>
-                        <mat-form-field>
-                          <mat-select placeholder="Car model" [formControl]="modelControl" required>
-                            <mat-option>--</mat-option>
-                            <mat-option *ngFor="let model of manufacturerModels  | async" [value]="model.carModelId">
-                              {{model.carModelName}}
-                            </mat-option>
-                          </mat-select>
-                          <mat-error *ngIf="manufacturerControl.hasError('required')">Please select a model</mat-error>
-                        </mat-form-field>
-                        <div>
-                          <button mat-button matStepperNext spellcheck="true">Next</button>
-                        </div>
-                    </mat-step>
-                    <mat-step>
-                      <ng-template matStepLabel>Done</ng-template>
-                      You are now done.
-                      <div>
-                        <button mat-button matStepperPrevious>Back</button>
-                        <button mat-button (click)="stepper.reset()">Reset</button>
-                      </div>
-                    </mat-step>
-                  </mat-vertical-stepper>
+      <mat-vertical-stepper [linear]="true" #stepper>
+        <mat-step [stepControl]="firstFormGroup" [editable]="false">
+          <ng-template matStepLabel>Choose your car manufacturer</ng-template>
+          <mat-form-field>
+            <mat-select placeholder="Car manufacturer" [formControl]="manufacturerControl">
+              <mat-option>--</mat-option>
+              <mat-option *ngFor="let manufacturer of manufacturersList  | async" [value]="manufacturer">
+                {{manufacturer.manufacturerName}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="manufacturerControl.hasError('required')">Please select a manufacturer</mat-error>
+          </mat-form-field>
+          <div>
+            <button mat-button matStepperNext  *ngIf= "!manufacturerControl.hasError('required')" (click)="loadModels(manufacturerControl.value.manufacturerId, manufacturerControl.value.manufacturerName)">Next</button>
+          </div>
+        </mat-step>
+
+        <mat-step [stepControl]="secondFormGroup" [editable]="false">
+            <ng-template matStepLabel>Choose your car model</ng-template>
+            <mat-form-field>
+              <mat-select placeholder="Car model" [formControl]="modelControl" required>
+                <mat-option>--</mat-option>
+                <mat-option *ngFor="let model of manufacturerModels  | async" [value]="model">
+                  {{model.carModelName}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="modelControl.hasError('required')">Please select a model</mat-error>
+            </mat-form-field>
+            <div>
+              <button mat-button matStepperNext *ngIf= "!modelControl.hasError('required')" (click)="loadEngineType(modelControl.value.carModelId, modelControl.value.carModelName)">Next</button>
+            </div>
+        </mat-step>
+
+        <mat-step [stepControl]="thirdFormGroup">
+            <ng-template matStepLabel>Set your car engine specs</ng-template>
+            <div [formGroup]="engineGroupControl">
+              <mat-form-field>
+                <mat-select placeholder="Engine Types" [formControl]="engineTypesControl" required>
+                  <mat-option>--</mat-option>
+                  <mat-option *ngFor="let type of engineTypes | async" [value]="type">
+                    {{type.type}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <mat-form-field class="margins" >
+                <input matInput placeholder="Engine value" formControlName="engineValueControl" required>
+              </mat-form-field>
+              <mat-form-field class="margins">
+                <input matInput placeholder="HP" formControlName="engineHpControl" required>
+              </mat-form-field>
+              <mat-error *ngIf="engineTypesControl.hasError('required')">Please select an engine type</mat-error>
+              <mat-error *ngIf="engineValueControl.hasError('required')">Please enter engine value</mat-error>
+              <mat-error *ngIf="engineHpControl.hasError('required')">Please enter HP</mat-error>
+            </div>                         
+            <div>
+              <button mat-button matStepperNext *ngIf="!engineTypesControl.hasError('required')&& !engineValueControl.hasError('required')&&!engineHpControl.hasError('required')"  (click)="loadGearBoxAndTransmissionTypes(engineTypesControl.value.engineTypeId, engineTypesControl.value.type, engineValueControl.value, engineHpControl.value)">Next</button>
+            </div>                       
+        </mat-step>
+
+        <mat-step [stepControl]="fourthFormGroup">
+          <ng-template matStepLabel>Choose your car gearbox and transmission types</ng-template>
+          <div [formGroup]="gearboxAndTransmissionGroupControl">
+            <mat-form-field>
+              <mat-select placeholder="GearBox type" [formControl]="gearBoxControl" required>
+                <mat-option>--</mat-option>
+                <mat-option *ngFor="let gearBox of gearBoxTypes | async" [value]="gearBox">
+                  {{gearBox.type}}
+                </mat-option>
+              </mat-select>                         
+              <mat-error *ngIf="gearBoxControl.hasError('required')">Please select a gearbox</mat-error>
+            </mat-form-field>
+            <mat-form-field  class="margins">
+                <mat-select placeholder="Transmission type" [formControl]="transmissionControl" required>
+                  <mat-option>--</mat-option>
+                  <mat-option *ngFor="let transmission of transmissionTypes  | async" [value]="transmission">
+                    {{transmission.type}}
+                  </mat-option>
+                </mat-select>                         
+                <mat-error *ngIf="transmissionControl.hasError('required')">Please select a transmission</mat-error>
+            </mat-form-field>                   
+          </div>
+            <div>
+              <button mat-button matStepperNext *ngIf="!transmissionControl.hasError('required')" (click)="loadCarDetails(gearBoxControl.value.gearBoxTypeId, gearBoxControl.value.type, transmissionControl.value.transmissionTypeId, transmissionControl.value.type)">Next</button>
+            </div>
+        </mat-step>
+
+        <mat-step [stepControl]="fifthFormGroup">
+            <ng-template matStepLabel>Set your car details</ng-template>
+            <div [formGroup]="yearAndVinCodeGroupControl">       
+              <mat-form-field>
+                  <input matInput [matDatepicker]="picker" placeholder="Choose a date" [formControl]="productionYearControl">
+                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                <mat-error *ngIf="productionYearControl.hasError('required')">Please enter car production year</mat-error>
+              </mat-form-field>             
+              <mat-form-field class="margins">
+                <input matInput placeholder="VIN code" formControlName="vinCodeControl" required>
+              </mat-form-field>            
+              <mat-error *ngIf="vinCodeControl.hasError('required')">Please enter VIN code</mat-error>
+            </div>
+
+            <div>
+              <button mat-button matStepperNext *ngIf="!productionYearControl.hasError('required');" (click)="loadAdvertisementDetails(productionYearControl.value, vinCodeControl.value)">Next</button>
+            </div>                       
+        </mat-step>
+
+        <mat-step [stepControl]="sixthFormGroup">
+          <ng-template matStepLabel>Set price and description</ng-template>
+          <div [formGroup]="descrAndPriceGroupControl">
+            <div>
+              <mat-form-field>
+                <input matInput placeholder="Price" formControlName="priceControl" required>
+              </mat-form-field>
+              <mat-error *ngIf="priceControl.hasError('required')">Please enter price</mat-error>
+            </div>
+            <div>       
+              <mat-form-field>
+                <textarea matInput placeholder="Description" formControlName="descriptionControl"></textarea>
+              </mat-form-field>      
+            </div>      
+          </div>
+
+          <div>
+            <button mat-button matStepperNext *ngIf="!priceControl.hasError('required');" (click)="createAdvertisement(priceControl.value, descriptionControl.value)">Create advertisement</button>
+          </div>                       
+      </mat-step>
+
+        <mat-step>
+          <ng-template matStepLabel>Done</ng-template>
+          Advertisement Guid = {{createdAdvGuid}}
+        </mat-step>
+
+      </mat-vertical-stepper>
   </mat-card-content>
 </mat-card> 
