@@ -7,7 +7,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { SaveUpdateResult } from "src/app/Models/saveUpdateResult"
-import { EngineType } from 'src/app/Models/engineType';
+import { EngineTypeModel } from 'src/app/Models/engineType';
 import { Engine } from 'src/app/Models/engine';
 
 @Injectable({
@@ -19,19 +19,13 @@ export class EngineService {
 
   createdEngine:Engine = new Engine();
 
-  getEngineTypes():Observable<EngineType[]>{
-    const getEngineTypesUrl= AppSettings.API_ENDPOINT+"Engine/GetEngineTypes";
-    return this.http.get<EngineType[]>(getEngineTypesUrl).pipe(catchError(ErrorHandler.handleError('getEngineTypes',[])));
+  getEngines():Observable<Engine[]>{
+    const getEngineTypesUrl= AppSettings.API_ENDPOINT+"Engine/GetEngines";
+    return this.http.get<Engine[]>(getEngineTypesUrl).pipe(catchError(ErrorHandler.handleError('getEngines',[])));
   }
 
-  createEngine(engineTypeId: number,value: string, hp: number){
+  createEngineFromType(engineToCreate: Engine){
     const createEngineUrl = AppSettings.API_ENDPOINT+ "Engine/CreateEngine";
-    let engine = new Engine();
-    engine.engineType=new EngineType();
-    engine.engineType.engineTypeId=engineTypeId;
-    engine.value=value;
-    engine.hp=hp;
-    let params = {"engine": JSON.stringify(engine)};
-    return this.http.post<SaveUpdateResult<Engine>>(createEngineUrl, {body: params} ).subscribe(data=>this.createdEngine= data.result).add(catchError(ErrorHandler.handleError('createEngine',[])));
+    return this.http.post<SaveUpdateResult<Engine>>(createEngineUrl, engineToCreate).subscribe(data=>this.createdEngine = data.result).add(catchError(ErrorHandler.handleError('createEngine',[])));
   }
 }

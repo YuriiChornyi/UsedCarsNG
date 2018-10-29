@@ -16,9 +16,8 @@ export class AdvertisementService {
 
   createdAdvertisement: Advertisement = new Advertisement();
 
-  createAdverticement(advertisement: Advertisement){
-    const createAdverticementUrl = AppSettings.API_ENDPOINT+"Advertisement/Create";
-    let param = {"advertisement": advertisement};
-    return this.http.post<SaveUpdateResult<Advertisement>>(createAdverticementUrl, {params: param}).subscribe(data => this.createdAdvertisement = data.result).add(catchError(ErrorHandler.handleError('createAdvertisement',[])));
+  createAdvertisement(advertisement: Advertisement){
+    const createAdverticementUrl = AppSettings.API_ENDPOINT+"Advertisement/CreateAdvertisement";
+    return this.http.post<SaveUpdateResult<Advertisement>>(createAdverticementUrl, advertisement).subscribe(data => this.createdAdvertisement = data.result).add(catchError(ErrorHandler.handleError('createAdvertisement',[])));
   }
 }

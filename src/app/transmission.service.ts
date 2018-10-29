@@ -19,9 +19,9 @@ export class TransmissionService {
 
   createdTransmission: Transmission = new Transmission();
 
-  getTransmissionTypes():Observable<TransmissionType[]>{
-    const getTransmissionTypesUrl= AppSettings.API_ENDPOINT+"Transmission/GetTransmissionTypes";
-    return this.http.get<TransmissionType[]>(getTransmissionTypesUrl).pipe(catchError(ErrorHandler.handleError('getGearBoxTypes',[])));
+  getTransmissions():Observable<Transmission[]>{
+    const getTransmissionTypesUrl= AppSettings.API_ENDPOINT+"Transmission/GetTransmissions";
+    return this.http.get<Transmission[]>(getTransmissionTypesUrl).pipe(catchError(ErrorHandler.handleError('transmissions',[])));
   }
 
   getGearBoxTypes():Observable<GearBoxType[]>{

@@ -1,4 +1,4 @@
-export class EngineType
+export class EngineTypeModel
 {
     engineTypeId: number;
     type: string;

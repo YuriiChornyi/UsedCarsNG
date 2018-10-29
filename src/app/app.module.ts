@@ -8,11 +8,16 @@ import { DemoMaterialModule } from './material-module';
 import { NewAdvertisementComponent } from './new-advertisement/new-advertisement.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule }    from '@angular/common/http';
+import { EngineToString } from 'src/app/engineToStringPipe';
+import { TransmissionToString } from 'src/app/transmissionToStringPipe';
+
 
 @NgModule({
   declarations: [
     AppComponent,
-    NewAdvertisementComponent
+    NewAdvertisementComponent,
+    EngineToString,
+    TransmissionToString
   ],
   imports: [
     BrowserModule,

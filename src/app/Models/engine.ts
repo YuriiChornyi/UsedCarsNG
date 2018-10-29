@@ -1,8 +1,8 @@
-import { EngineType } from 'src/app/Models/engineType';
+import { EngineTypeModel } from 'src/app/Models/engineType';
 
 export class Engine {
     engineId: number;
-    engineType: EngineType;
+    engineType: EngineTypeModel;
     value: string;
     hp: number;
 }

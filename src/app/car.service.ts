@@ -17,9 +17,14 @@ export class CarService {
 
   createdCar: Car = new Car();
 
-  createCar(engineId: number, transmissionId: number, carModelId: number, productionYear: Date, vinCode: string){
-    const createCarUrl= AppSettings.API_ENDPOINT+"Car/CreateCar";
-    let params = {"engineId":engineId.toString(),"transmissionId": transmissionId.toString(), "carModelId":carModelId.toString(), "productionYear": productionYear.toDateString(), "vinCode": vinCode}
-    return this.http.post<SaveUpdateResult<Car>>(createCarUrl, {params:params}).subscribe(data => this.createdCar = data.result).add(catchError(ErrorHandler.handleError('createCar',[])));
+  // createCar(engineId: number, transmissionId: number, carModelId: number, productionYear: Date, vinCode: string){
+  //   const createCarUrl= AppSettings.API_ENDPOINT+"Car/CreateCar";
+  //   let params = {"engineId":engineId.toString(),"transmissionId": transmissionId.toString(), "carModelId":carModelId.toString(), "productionYear": productionYear.toDateString(), "vinCode": vinCode}
+  //   return this.http.post<SaveUpdateResult<Car>>(createCarUrl, {params:params}).subscribe(data => this.createdCar = data.result).add(catchError(ErrorHandler.handleError('createCar',[])));
+  // }
+
+  createCarFromType(carToCreate: Car){
+    const createCarUrl = AppSettings.API_ENDPOINT+"Car/CreateCar";
+    return this.http.post<SaveUpdateResult<Car>>(createCarUrl, carToCreate).subscribe(data => this.createdCar = data.result).add(catchError(ErrorHandler.handleError('createCar',[])));
   }
 }

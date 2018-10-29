@@ -1,6 +1,6 @@
 import { Manufacturer } from 'src/app/Models/manufacturer';
 
-export class ManufacturerModels
+export class ManufacturerModel
 {
     carModelId: number;
     carModelName: string;

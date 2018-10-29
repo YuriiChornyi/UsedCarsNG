@@ -3,9 +3,10 @@ import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms'
 import { Observable, of } from 'rxjs';
 import { MAT_STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 
+
 import { Manufacturer } from 'src/app/Models/manufacturer';
-import { ManufacturerModels } from 'src/app/Models/manufacturerModels';
-import { EngineType } from 'src/app/Models/engineType';
+import { ManufacturerModel } from 'src/app/Models/manufacturerModels';
+import { EngineTypeModel } from 'src/app/Models/engineType';
 import { Engine } from 'src/app/Models/engine';
 import { GearBoxType } from 'src/app/Models/gearBoxType';
 import { TransmissionType } from 'src/app/Models/transmissionType';
@@ -31,14 +32,11 @@ import { Guid } from 'guid-typescript/dist/guid';
 })
 
 export class NewAdvertisementComponent implements OnInit {
-  selectedManufacturer:Manufacturer = new Manufacturer();
-  selectedModel:ManufacturerModels = new ManufacturerModels();
-  selectedEngine:Engine = new Engine(); 
-  selectedTransmission: Transmission = new Transmission();
+  selectedManufactererModel: ManufacturerModel = new ManufacturerModel();
   selectedCar: Car = new Car();
   selectedAdvertisement: Advertisement = new Advertisement();
 
-  public createdAdvGuid: string;
+  public createdAdvGuid: any;
 
   firstFormGroup: FormGroup;
   secondFormGroup: FormGroup;
@@ -47,18 +45,12 @@ export class NewAdvertisementComponent implements OnInit {
   fifthFormGroup: FormGroup;
   sixthFormGroup: FormGroup;
   
-
-  engineGroupControl: FormGroup;
-  gearboxAndTransmissionGroupControl: FormGroup;
   yearAndVinCodeGroupControl: FormGroup;
   descrAndPriceGroupControl: FormGroup;
 
   manufacturerControl: FormControl;
   modelControl: FormControl;
-  engineTypesControl: FormControl;
-  engineValueControl: FormControl;
-  engineHpControl: FormControl;
-  gearBoxControl: FormControl;
+  enginesControl: FormControl;
   transmissionControl: FormControl;
   productionYearControl: FormControl;
   vinCodeControl: FormControl;
@@ -66,11 +58,9 @@ export class NewAdvertisementComponent implements OnInit {
   descriptionControl: FormControl;
 
   manufacturersList: Observable<Manufacturer[]>;
-  manufacturerModels: Observable<ManufacturerModels[]>;
-  engineTypes: Observable<EngineType[]>;
-  gearBoxTypes: Observable<GearBoxType[]>;
-  transmissionTypes: Observable<TransmissionType[]>;
-
+  manufacturerModels: Observable<ManufacturerModel[]>;
+  engines: Observable<Engine[]>;
+  transmissions: Observable<Transmission[]>;
 
   constructor(private _formBuilder: FormBuilder, private manufacturerService: ManufacturerService, private engineService: EngineService, private transmissionService: TransmissionService, private carService: CarService, private advertisementService: AdvertisementService) {}
 
@@ -79,10 +69,7 @@ export class NewAdvertisementComponent implements OnInit {
 
     this.manufacturerControl = new FormControl('', [Validators.required]);
     this.modelControl = new FormControl('', [Validators.required]);
-    this.engineTypesControl = new FormControl('', [Validators.required]);
-    this.engineValueControl = new FormControl('', [Validators.required]);
-    this.engineHpControl = new FormControl('', [Validators.required]);
-    this.gearBoxControl = new FormControl('', [Validators.required]);
+    this.enginesControl = new FormControl('', [Validators.required]);
     this.transmissionControl = new FormControl('', [Validators.required]);
     this.productionYearControl = new FormControl('', [Validators.required]);
     this.vinCodeControl = new FormControl('', [Validators.required]);
@@ -93,107 +80,72 @@ export class NewAdvertisementComponent implements OnInit {
       manufacturerControl: this.manufacturerControl });
 
     this.secondFormGroup = this._formBuilder.group({
-      modelControl:this.modelControl});
-
-    this.engineGroupControl= new FormGroup({
-        engineTypesControl: this.engineTypesControl,
-        engineValueControl:this.engineValueControl,
-        engineHpControl: this.engineHpControl
-     });
+      modelControl :this.modelControl});
 
     this.thirdFormGroup = this._formBuilder.group({
-      engineGroupControl:this.engineGroupControl
-    })
-
-    this.gearboxAndTransmissionGroupControl= new FormGroup({
-      gearBoxControl:this.gearBoxControl,
-      transmissionControl:this.transmissionControl
-    });
+      enginesControl: this.enginesControl});
 
     this.fourthFormGroup = this._formBuilder.group({
-      gearboxAndTransmissionGroupControl:this.gearboxAndTransmissionGroupControl
-    });
+      transmissionControl:this.transmissionControl});
 
     this.yearAndVinCodeGroupControl= new FormGroup({
       productionYearControl:this.productionYearControl,
-      vinCodeControl:this.vinCodeControl
-    });
+      vinCodeControl:this.vinCodeControl});
 
     this.fifthFormGroup = this._formBuilder.group({
-      yearAndVinCodeGroupControl:this.yearAndVinCodeGroupControl
-    });
+      yearAndVinCodeGroupControl:this.yearAndVinCodeGroupControl});
 
     this.descrAndPriceGroupControl= new FormGroup({
       priceControl: this.priceControl,
-      descriptionControl: this.descriptionControl
-    });
+      descriptionControl: this.descriptionControl});
 
     this.sixthFormGroup = this._formBuilder.group({
-      descrAndPriceGroupControl:this.descrAndPriceGroupControl
-    });
+      descrAndPriceGroupControl:this.descrAndPriceGroupControl});
 
   }
 
-  loadModels(manufacturerId:number, manufacturerName:string){
-    this.selectedManufacturer.manufacturerId = manufacturerId;
-    this.selectedManufacturer.manufacturerName = manufacturerName;
-    this.manufacturerModels = this.manufacturerService.getManufacturerModels(this.selectedManufacturer.manufacturerId);
+  loadModels(manufacturerId:number){
+    this.manufacturerModels = this.manufacturerService.getManufacturerModels(manufacturerId);
   }
 
-  loadEngineType(modelId:number, modelName:string){
-    this.selectedModel.carModelId = modelId;
-    this.selectedModel.carModelName = modelName;
-    this.selectedModel.manufacturer = this.selectedManufacturer;
-    
-    this.engineTypes = this.engineService.getEngineTypes();
+  loadEngines(modelId:number){
+    this.selectedCar.carModelModel = new ManufacturerModel();
+    this.selectedCar.carModelModel.carModelId = modelId;
+    this.engines = this.engineService.getEngines();
   }
 
-  loadGearBoxAndTransmissionTypes(engineTypeId: number, engineType: string, engineValue: string, engineHp: number){
-    console.log(engineTypeId);
-    console.log(engineType);
-    console.log(engineValue);
-    console.log(engineHp);
-
-    this.engineService.createEngine(engineTypeId, engineValue, engineHp);
-    this.selectedEngine = this.engineService.createdEngine;
-
-    this.gearBoxTypes = this.transmissionService.getGearBoxTypes();
-    this.transmissionTypes = this.transmissionService.getTransmissionTypes();
+  loadTransmissions(engineId: number){
+    this.selectedCar.engine = new Engine();
+    this.selectedCar.engine.engineId = engineId;
+    this.transmissions = this.transmissionService.getTransmissions();
   }
 
-  loadCarDetails(gearBoxTypeId: number, gearBoxType: string, transmissionId: number, transmissionType: string){
-    this.transmissionService.createTransmission(gearBoxTypeId,transmissionId);
-    console.log("load car details");
-    console.log(gearBoxTypeId);
-    console.log(gearBoxType);
+  loadCarDetails(transmissionId: number){
     console.log(transmissionId);
-    console.log(transmissionType);
-    console.log("load car details");
-
-    this.selectedTransmission = this.transmissionService.createdTransmission;
+    this.selectedCar.transmission = new Transmission();
+    this.selectedCar.transmission.transmissionId = transmissionId;
   }
 
   loadAdvertisementDetails(dp:Date, vinCode: string){
-    this.carService.createCar(this.selectedEngine.engineId, this.selectedTransmission.transmissionId, this.selectedModel.carModelId, dp, vinCode);
-    console.log(dp);
-    console.log(vinCode);
-    this.selectedCar=this.carService.createdCar;
+    this.selectedCar.productionYear = dp;
+    this.selectedCar.vinCode = vinCode;
+
+    this.carService.createCarFromType(this.selectedCar);
   }
 
   createAdvertisement(price: number, description: string){
-    
-    let advertisement = new Advertisement();
+    this.selectedCar = this.carService.createdCar;
+    console.log(this.carService.createdCar.carId);
 
+    let advertisement = new Advertisement();
     advertisement.carId = this.selectedCar.carId;
     advertisement.userId = Guid.parse("43d7bb9f-157a-430b-b3b9-08d639a81cdd");
     advertisement.description = description;
     advertisement.price=price;
 
-    this.advertisementService.createAdverticement(advertisement);
+    this.advertisementService.createAdvertisement(advertisement);
     this.selectedAdvertisement = this.advertisementService.createdAdvertisement;
-    this.createdAdvGuid = this.selectedAdvertisement.advertisementId.toString();
-    console.log(price);
-    console.log(description);
+    this.createdAdvGuid = this.selectedAdvertisement.advertisementId;
   }
 }
 
