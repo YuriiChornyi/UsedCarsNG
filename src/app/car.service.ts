@@ -25,6 +25,6 @@ export class CarService {
 
   createCarFromType(carToCreate: Car){
     const createCarUrl = AppSettings.API_ENDPOINT+"Car/CreateCar";
-    return this.http.post<SaveUpdateResult<Car>>(createCarUrl, carToCreate).subscribe(data => this.createdCar = data.result).add(catchError(ErrorHandler.handleError('createCar',[])));
+    return this.http.post<SaveUpdateResult<Car>>(createCarUrl, carToCreate).subscribe(data => this.createdCar = data.result);
   }
 }

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { Observable, of } from 'rxjs';
 import { MAT_STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
+import { FileRestrictions, SelectEvent, ClearEvent, RemoveEvent, FileInfo } from '@progress/kendo-angular-upload';
 
 
 import { Manufacturer } from 'src/app/Models/manufacturer';
@@ -36,7 +37,10 @@ export class NewAdvertisementComponent implements OnInit {
   selectedCar: Car = new Car();
   selectedAdvertisement: Advertisement = new Advertisement();
 
+  myFiles: Array<FileInfo>;
+
   public createdAdvGuid: any;
+  public uploadSaveUrl = "https://localhost:5001/Photo/AddPhotos";
 
   firstFormGroup: FormGroup;
   secondFormGroup: FormGroup;
@@ -101,7 +105,6 @@ export class NewAdvertisementComponent implements OnInit {
 
     this.sixthFormGroup = this._formBuilder.group({
       descrAndPriceGroupControl:this.descrAndPriceGroupControl});
-
   }
 
   loadModels(manufacturerId:number){
@@ -109,43 +112,43 @@ export class NewAdvertisementComponent implements OnInit {
   }
 
   loadEngines(modelId:number){
-    this.selectedCar.carModelModel = new ManufacturerModel();
-    this.selectedCar.carModelModel.carModelId = modelId;
+    this.selectedCar.carModelId = modelId;
     this.engines = this.engineService.getEngines();
   }
 
   loadTransmissions(engineId: number){
-    this.selectedCar.engine = new Engine();
-    this.selectedCar.engine.engineId = engineId;
+    this.selectedCar.engineId = engineId;
     this.transmissions = this.transmissionService.getTransmissions();
   }
 
   loadCarDetails(transmissionId: number){
-    console.log(transmissionId);
-    this.selectedCar.transmission = new Transmission();
-    this.selectedCar.transmission.transmissionId = transmissionId;
+    this.selectedCar.transmissionId = transmissionId;
   }
 
   loadAdvertisementDetails(dp:Date, vinCode: string){
     this.selectedCar.productionYear = dp;
     this.selectedCar.vinCode = vinCode;
-
-    this.carService.createCarFromType(this.selectedCar);
   }
 
   createAdvertisement(price: number, description: string){
-    this.selectedCar = this.carService.createdCar;
-    console.log(this.carService.createdCar.carId);
+    this.selectedAdvertisement = new Advertisement();
+    this.selectedAdvertisement.car = this.selectedCar;
+    this.selectedAdvertisement.description = description;
+    this.selectedAdvertisement.price = price;
 
-    let advertisement = new Advertisement();
-    advertisement.carId = this.selectedCar.carId;
-    advertisement.userId = Guid.parse("43d7bb9f-157a-430b-b3b9-08d639a81cdd");
-    advertisement.description = description;
-    advertisement.price=price;
+    //this.advertisementService.createAdvertisement(advertisement);
+  }
 
-    this.advertisementService.createAdvertisement(advertisement);
+  createAdvAfterImage()
+  {
+    //this.advertisementService.createAdvertisement(this.selectedAdvertisement);
+  }
+
+  loadadvGuid()
+  {
     this.selectedAdvertisement = this.advertisementService.createdAdvertisement;
     this.createdAdvGuid = this.selectedAdvertisement.advertisementId;
   }
+
 }
 

@@ -110,8 +110,13 @@
       </mat-step>
 
         <mat-step>
-          <ng-template matStepLabel>Done</ng-template>
-          Advertisement Guid = {{createdAdvGuid}}
+          <ng-template matStepLabel>Add few images</ng-template>
+          <kendo-upload class = "k-icon.k-i-loading"
+          [saveUrl]="saveurl"
+          [removeUrl]="uploadRemoveUrl"
+          [(ngModel)]="myFiles"
+          [autoUpload]="false">
+        </kendo-upload>
         </mat-step>
 
       </mat-vertical-stepper>

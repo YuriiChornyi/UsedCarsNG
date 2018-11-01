@@ -10,14 +10,16 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule }    from '@angular/common/http';
 import { EngineToString } from 'src/app/engineToStringPipe';
 import { TransmissionToString } from 'src/app/transmissionToStringPipe';
-
+import { ViewAdvertisementComponent } from './view-advertisement/view-advertisement.component';
+import { UploadModule } from '@progress/kendo-angular-upload';
 
 @NgModule({
   declarations: [
     AppComponent,
     NewAdvertisementComponent,
     EngineToString,
-    TransmissionToString
+    TransmissionToString,
+    ViewAdvertisementComponent
   ],
   imports: [
     BrowserModule,
@@ -26,7 +28,8 @@ import { TransmissionToString } from 'src/app/transmissionToStringPipe';
     DemoMaterialModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    UploadModule
   ],
   providers: [],
   bootstrap: [AppComponent]

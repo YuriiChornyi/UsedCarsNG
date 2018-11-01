@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AppSettings } from "src/app/AppSettings";
-import { ErrorHandler } from "src/app/errorHandler";
-import { catchError } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 import { Advertisement } from 'src/app/Models/advertisement';
+import { AdvertisementView } from 'src/app/Models/advertisementView';
 import { SaveUpdateResult } from "src/app/Models/saveUpdateResult"
+import { ListDto } from 'src/app/Models/listDto';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,13 @@ export class AdvertisementService {
   createdAdvertisement: Advertisement = new Advertisement();
 
   createAdvertisement(advertisement: Advertisement){
-    const createAdverticementUrl = AppSettings.API_ENDPOINT+"Advertisement/CreateAdvertisement";
-    return this.http.post<SaveUpdateResult<Advertisement>>(createAdverticementUrl, advertisement).subscribe(data => this.createdAdvertisement = data.result).add(catchError(ErrorHandler.handleError('createAdvertisement',[])));
+    const createAdvertisementUrl = AppSettings.API_ENDPOINT+"Advertisement/CreateAdvertisement";
+    return this.http.post<SaveUpdateResult<Advertisement>>(createAdvertisementUrl, advertisement).subscribe(data => this.createdAdvertisement = data.result);
+  }
+
+  getAdvertisementsPaged(offset: number, pageSize: number): Observable<ListDto<AdvertisementView>>{
+    const getAdverticementsUrl = AppSettings.API_ENDPOINT+"Advertisement/GetAdvertisementsPaged";
+    let params = {"offset": offset.toString(), "pageSize": pageSize.toString()};
+    return this.http.get<ListDto<AdvertisementView>>(getAdverticementsUrl, {params: params});
   }
 }
