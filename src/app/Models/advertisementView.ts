@@ -9,4 +9,5 @@ export class AdvertisementView{
     userName: string;
     email: string;
     phone: string;
+    photo: string;
 }

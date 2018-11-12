@@ -15,11 +15,9 @@ export class AdvertisementService {
 
   constructor(private http: HttpClient) { }
 
-  createdAdvertisement: Advertisement = new Advertisement();
-
   createAdvertisement(advertisement: Advertisement){
     const createAdvertisementUrl = AppSettings.API_ENDPOINT+"Advertisement/CreateAdvertisement";
-    return this.http.post<SaveUpdateResult<Advertisement>>(createAdvertisementUrl, advertisement).subscribe(data => this.createdAdvertisement = data.result);
+    return this.http.post<SaveUpdateResult<Advertisement>>(createAdvertisementUrl, advertisement);
   }
 
   getAdvertisementsPaged(offset: number, pageSize: number): Observable<ListDto<AdvertisementView>>{

@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { Observable, of } from 'rxjs';
 import { MAT_STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
-import { FileRestrictions, SelectEvent, ClearEvent, RemoveEvent, FileInfo } from '@progress/kendo-angular-upload';
+import { FileRestrictions, SelectEvent, ClearEvent, RemoveEvent, FileInfo, SuccessEvent, UploadEvent } from '@progress/kendo-angular-upload';
+import { MatSnackBar } from '@angular/material';
 
 
 import { Manufacturer } from 'src/app/Models/manufacturer';
@@ -14,7 +15,7 @@ import { TransmissionType } from 'src/app/Models/transmissionType';
 import { Transmission } from 'src/app/Models/transmission';
 import { Car } from 'src/app/Models/car';
 import { Advertisement } from 'src/app/Models/advertisement';
-
+import { Photo } from 'src/app/Models/photo';
 
 import { ManufacturerService } from 'src/app/manufacturer.service';
 import { EngineService } from 'src/app/engine.service';
@@ -35,6 +36,7 @@ import { Guid } from 'guid-typescript/dist/guid';
 export class NewAdvertisementComponent implements OnInit {
   selectedManufactererModel: ManufacturerModel = new ManufacturerModel();
   selectedCar: Car = new Car();
+  selectedPhotos: Array<Photo> = new Array();
   selectedAdvertisement: Advertisement = new Advertisement();
 
   myFiles: Array<FileInfo>;
@@ -66,7 +68,7 @@ export class NewAdvertisementComponent implements OnInit {
   engines: Observable<Engine[]>;
   transmissions: Observable<Transmission[]>;
 
-  constructor(private _formBuilder: FormBuilder, private manufacturerService: ManufacturerService, private engineService: EngineService, private transmissionService: TransmissionService, private carService: CarService, private advertisementService: AdvertisementService) {}
+  constructor(private _formBuilder: FormBuilder, private manufacturerService: ManufacturerService, private engineService: EngineService, private transmissionService: TransmissionService, private carService: CarService, private advertisementService: AdvertisementService, public snackBar: MatSnackBar) {}
 
   ngOnInit() {
     this.manufacturersList=this.manufacturerService.getManufacturers();
@@ -130,25 +132,39 @@ export class NewAdvertisementComponent implements OnInit {
     this.selectedCar.vinCode = vinCode;
   }
 
-  createAdvertisement(price: number, description: string){
-    this.selectedAdvertisement = new Advertisement();
+  loadPhotoForm(price: number, description: string){
     this.selectedAdvertisement.car = this.selectedCar;
     this.selectedAdvertisement.description = description;
     this.selectedAdvertisement.price = price;
-
-    //this.advertisementService.createAdvertisement(advertisement);
   }
 
-  createAdvAfterImage()
-  {
-    //this.advertisementService.createAdvertisement(this.selectedAdvertisement);
+  createAdvertisement(){
+    this.selectedAdvertisement.photos = this.selectedPhotos;
+    this.advertisementService.createAdvertisement(this.selectedAdvertisement).subscribe(data => this.snackBar.open("Your advertisement created successfully", "OK", {
+      duration: 2000
+    }));
   }
 
-  loadadvGuid()
-  {
-    this.selectedAdvertisement = this.advertisementService.createdAdvertisement;
-    this.createdAdvGuid = this.selectedAdvertisement.advertisementId;
+  successEventHandler(e: SuccessEvent) {
+    
+    console.log('The '+ e.response.body+ 'GUID');
+    console.log('The ' + e.operation + ' was successful!');
+    let photo = new Photo();
+    photo.photoName = e.response.body;
+    this.selectedPhotos.push(photo);
   }
 
+  errorEventHandler(e: ErrorEvent) {
+    console.log(e.error);
+    console.log(e);
+    console.log('An error occurred');
+  }
+
+  uploadEventHandler(e: UploadEvent) {
+    e.data = {
+      guid: Guid.create()
+    };
+    console.log("File description")
+  }
 }
 

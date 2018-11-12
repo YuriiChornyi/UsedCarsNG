@@ -105,19 +105,26 @@
           </div>
 
           <div>
-            <button mat-button matStepperNext *ngIf="!priceControl.hasError('required');" (click)="createAdvertisement(priceControl.value, descriptionControl.value)">Create advertisement</button>
+            <button mat-button matStepperNext *ngIf="!priceControl.hasError('required');" (click)="loadPhotoForm(priceControl.value, descriptionControl.value)">Proceed to photo attaching</button>
           </div>                       
       </mat-step>
 
-        <mat-step>
-          <ng-template matStepLabel>Add few images</ng-template>
+      <mat-step>
+        <ng-template matStepLabel>Add images</ng-template>
           <kendo-upload class = "k-icon.k-i-loading"
-          [saveUrl]="saveurl"
-          [removeUrl]="uploadRemoveUrl"
-          [(ngModel)]="myFiles"
-          [autoUpload]="false">
-        </kendo-upload>
-        </mat-step>
+            [saveUrl]="uploadSaveUrl"
+            [removeUrl]="uploadRemoveUrl"
+            [(ngModel)]="myFiles"
+            [autoUpload]="false"
+            (success)="successEventHandler($event)"
+            (upload)="uploadEventHandler($event)"
+            (error)="errorEventHandler($event)">
+          </kendo-upload>
+
+          <div>
+            <button mat-button matStepperNext (click)="createAdvertisement()">Create advertisement</button>
+          </div>
+      </mat-step>
 
       </mat-vertical-stepper>
   </mat-card-content>

@@ -14,7 +14,7 @@ import { AdvertisementView } from 'src/app/Models/advertisementView';
 export class ViewAdvertisementComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  displayedColumns: string[] = ['CarManufacturer', 'CarModel', 'ProductionYear', 'Price', 'VinCode', 'Transmission', 'Engine', 'UserName', 'Email'];
+  displayedColumns: string[] = ['Photo', 'CarManufacturer', 'CarModel', 'ProductionYear', 'Price', 'VinCode', 'Transmission', 'Engine', 'UserName', 'Email'];
   dataSource = new MatTableDataSource<AdvertisementView>();
   resultsLength = 0;
   isLoadingResults = false;
